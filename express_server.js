@@ -14,6 +14,17 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+function generateRandomString() {
+  let randomStr = "";
+  let length = 6;
+  let possibleChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+  for (let i = 0; i < length; i++) {
+    randomStr += possibleChar[Math.floor(Math.random() * possibleChar.length)];
+  }
+  return randomStr;
+}
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -32,6 +43,16 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render("urls_show", templateVars);
 });
+
+app.post("/urls", (req, res) => {
+  // console.log(req.body.longURL);  // Log the POST request body to the console
+  const newKey = generateRandomString();
+  urlDatabase[newKey] = req.body.longURL;
+  // console.log(urlDatabase);
+  res.redirect(`/urls/${newKey}`);         // Respond with 'Ok' (we will replace this)
+});
+
+
 
 
 // app.get("/urls.json", (req, res) => {
