@@ -17,7 +17,7 @@ const urlDatabase = {
 function generateRandomString() {
   let randomStr = "";
   let length = 6;
-  let possibleChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  let possibleChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
   for (let i = 0; i < length; i++) {
     randomStr += possibleChar[Math.floor(Math.random() * possibleChar.length)];
@@ -68,6 +68,18 @@ app.get("/u/:shortURL", (req, res) => {
     return res.status(404).send("bye");
   }
   res.redirect(longURL);
+});
+
+// app.get("/u/:shortURL/delete", (req, res) => {
+//   const shortURL = req.params.shortURL;
+//   delete shortURL;
+//   res.redirect("/urls");
+// });
+
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
 });
 
 // app.get("/urls.json", (req, res) => {
