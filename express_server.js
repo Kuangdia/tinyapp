@@ -1,6 +1,10 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+const bodyParser = require("body-parser");
+
+// makes data readable to us
+app.use(bodyParser.urlencoded({extended: true}));
 
 // sets express to search view folder for ejs files
 app.set("view engine", "ejs");
