@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 
+// sets express to search view folder for ejs files
 app.set("view engine", "ejs");
 
 const urlDatabase = {
@@ -15,12 +16,18 @@ app.get("/", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
-  res.render(urlDatabase);
+  // res.render(templateFileName, data);
+  res.render("urls_index", templateVars);
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+app.get("/urls/:shortURL", (req, res) => {
+  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL };
+  res.render("urls_show", templateVars);
 });
+
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase);
+// });
 
 // app.get("/hello", (req, res) => {
 //   res.send("<html><body>Hello <b>World</b></body></html>\n");
