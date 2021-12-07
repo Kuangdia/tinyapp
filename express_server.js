@@ -61,6 +61,15 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${newKey}`);
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+  if (longURL === undefined) {
+    return res.status(404).send("bye");
+  }
+  res.redirect(longURL);
+});
+
 // app.get("/urls.json", (req, res) => {
 //   res.json(urlDatabase);
 // });
