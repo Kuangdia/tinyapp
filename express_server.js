@@ -2,9 +2,11 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+const cookieParser = require('cookie-parser')
 
 // makes data readable when we POST
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser())
 
 // sets express to automatically search views folder for ejs files (we omit views/)
 app.set("view engine", "ejs");
@@ -79,14 +81,14 @@ app.get("/urls/edit/:shortURL", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
-  // const shortURL = req.params.shortURL;
-  // const longURL = req.body.longURL;
+  // console.log(req.params);
+  // console.log(req.body);
+  const shortURL = req.params.shortURL;
+  const longURL = req.body.longURL;
 
-  // urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = longURL;
 
-  // res.redirect("/urls");
+  res.redirect("/urls");
 })
 
 app.post("/urls/:shortURL/delete", (req, res) => {
