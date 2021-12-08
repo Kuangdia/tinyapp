@@ -13,23 +13,27 @@ app.use(cookieParser())
 app.set("view engine", "ejs");
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  // "b2xVn2": "http://www.lighthouselabs.ca",
+  // "9sm5xK": "http://www.google.com"
 };
 
 function generateRandomString() {
   let randomStr = "";
-  let length = 6;
+  let stringLength = 6;
   let possibleChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < stringLength; i++) {
     randomStr += possibleChar[Math.floor(Math.random() * possibleChar.length)];
   }
   return randomStr;
 }
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.send("Homepage");
+});
+
+app.get("/registration", (req, res) => {
+  res.send("Registration Page");
 });
 
 // loops through urlDatabase to output key + values on page
