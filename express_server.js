@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = 4545; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { restart } = require("nodemon");
@@ -30,7 +30,7 @@ const users = {
   }
 };
 
-const findUserByEmail = (email) => {
+const findUserEmail = (email) => {
   for (const userID in users) {
     const user = users[userID];
     if (user.email === email) {
@@ -55,11 +55,14 @@ app.get("/", (req, res) => {
   res.redirect("/urls");
 });
 
+app.get("/login", (req, res) => {
+  res.render("login")
+});
+
 app.get("/register", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     username: req.cookies["username"],
-
   }
 
   res.render("register")
@@ -143,6 +146,7 @@ app.post("/login", (req, res) => {
   const username = req.body.username
   
   res.cookie("username", username)
+  console.log(username);
 
   res.redirect("/urls");
 });
@@ -163,15 +167,14 @@ app.post("/register", (req, res) => {
 
 
 
-
   res.redirect("urls/");
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("username");
+  req.session = null;
   res.redirect("/urls")
 })
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Listening on port ${PORT}!`);
 });
