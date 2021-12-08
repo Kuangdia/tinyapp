@@ -70,11 +70,24 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-// app.get("/u/:shortURL/delete", (req, res) => {
-//   const shortURL = req.params.shortURL;
-//   delete shortURL;
-//   res.redirect("/urls");
-// });
+app.get("/urls/edit/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const templateVars = {
+    urls: urlDatabase[shortURL]
+  };
+  res.render("urls_show", templateVars);
+});
+
+app.post("/urls/:shortURL", (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+  // const shortURL = req.params.shortURL;
+  // const longURL = req.body.longURL;
+
+  // urlDatabase[shortURL] = longURL;
+
+  // res.redirect("/urls");
+})
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
