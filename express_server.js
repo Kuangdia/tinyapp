@@ -28,7 +28,17 @@ const users = {
     email: "user2@example.com", 
     password: "dishwasher-funk"
   }
-}
+};
+
+const findUserByEmail = (email) => {
+  for (const userID in users) {
+    const user = users[userID];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
 
 function generateRandomString() {
   let randomStr = "";
@@ -139,8 +149,20 @@ app.post("/login", (req, res) => {
 
 app.post("/register", (req, res) => {
   // console.log(req.body); // { email: 'slorrrr@gmail.com', password: '123' }
-  // const email = req.body.email;
-  // const password = req.body.password;
+  const email = req.body.email;
+  const password = req.body.password;
+  const id = generateRandomString();
+
+  users[id] = {
+    id: id,
+    email: email,
+    password: password
+  }
+
+  console.log('users', users[id]);
+
+
+
 
   res.redirect("urls/");
 });
