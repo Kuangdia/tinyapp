@@ -32,8 +32,10 @@ app.get("/", (req, res) => {
   res.send("Homepage");
 });
 
-app.get("/registration", (req, res) => {
-  res.send("Registration Page");
+app.get("/register", (req, res) => {
+
+
+  res.render("register")
 });
 
 // loops through urlDatabase to output key + values on page
@@ -116,6 +118,12 @@ app.post("/login", (req, res) => {
   res.cookie("username", username)
 
   res.redirect("/urls");
+});
+
+app.post("/register", (req, res) => {
+  // console.log(req.body); // { email: 'slorrrr@gmail.com', password: '123' }
+
+  res.redirect("urls/");
 });
 
 app.post("/logout", (req, res) => {
