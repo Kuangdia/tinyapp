@@ -37,7 +37,7 @@ const users = {
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "dishwasher-funk"
+    password: "123"
   }
 };
 
@@ -78,11 +78,25 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login")
+  const userId = req.cookies["user_id"];
+
+  const templateVars = { 
+    urls: urlsForUser(userId),
+    user: users[userId]
+  };
+
+  res.render("login", templateVars)
 });
 
 app.get("/register", (req, res) => {
-  res.render("register")
+  const userId = req.cookies["user_id"];
+
+  const templateVars = { 
+    urls: urlsForUser(userId),
+    user: users[userId]
+  };
+
+  res.render("register", templateVars)
 });
 
 // loops through urlDatabase to output key + values on page
@@ -127,7 +141,6 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-// uses same /urls page with get/post
 app.post("/urls", (req, res) => {
   // console.log(req.body.longURL);  // Log the POST request body to the console
   const userID = req.cookies["user_id"];
@@ -196,14 +209,18 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+
+  if (!email || !password) {
+    return res.status(400).send("<a href='/login'>Your email and password cannot be blank. Click to login.</a>")
+  }
   
   const user = findUserEmail(email);
   if (!user) {
-    return res.status(403).send("Your username does not exist")
+    return res.status(403).send("<a href='/login'>Your username does not exist. Click to login.</a>")
   }
 
   if (user.password !== password) {
-    return res.status(403).send("Your password is incorrect")
+    return res.status(403).send("<a href='/login'>Your password is incorrect. Click to login.</a>")
   }
 
   res.cookie("user_id", user.id);
