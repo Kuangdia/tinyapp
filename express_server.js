@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const PORT = 4545; // default port 8080
+const PORT = 3000; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { restart } = require("nodemon");
@@ -31,14 +31,23 @@ const users = {
 };
 
 const findUserEmail = (email) => {
-  for (const userID in users) {
-    const user = users[userID];
+  for (const userId in users) {
+    const user = users[userId];
     if (user.email === email) {
       return user;
     }
   }
   return null;
 };
+
+// const findUserId = (user_id) => {
+//   for (let userId in users) {
+//     if (user_id === userId) {
+//       return users[userId];
+//     }
+//   }
+//   return null;
+// }
 
 function generateRandomString() {
   let randomStr = "";
@@ -60,9 +69,10 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
+
+
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
   }
 
   res.render("register")
@@ -70,22 +80,35 @@ app.get("/register", (req, res) => {
 
 // loops through urlDatabase to output key + values on page
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase,
-  username: req.cookies["username"] };
+  console.log(req.cookies);
+  const userId = req.cookies["user_id"];
+  // "aBcDeF"
+
+  const templateVars = { 
+    urls: urlDatabase,
+    user: users[userId]
+  };
   res.render("urls_index", templateVars);
 });
 
 // populates new shortURL link page
 app.get("/urls/new", (req, res) => {
-  const templateVars = { urls: urlDatabase,
-    username: req.cookies["username"] };
+  const userId = req.cookies["user_id"];
+  const templateVars = { 
+    urls: urlDatabase,
+    user: users[userId] };
   res.render("urls_new", templateVars);
 });
 
 // takes in a parameter (:shortURL)
 app.get("/urls/:shortURL", (req, res) => {
+  const userId = req.cookies["user_id"];
   // uses same parameter on top for shortURL, longURL outputs value
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], username: req.cookies["username"] };
+  const templateVars = { 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL], 
+    user: users[userId] 
+  };
   res.render("urls_show", templateVars);
 });
 
@@ -145,8 +168,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const username = req.body.username
   
-  res.cookie("username", username)
-  console.log(username);
+  res.cookie("user_id", username);
 
   res.redirect("/urls");
 });
@@ -157,21 +179,32 @@ app.post("/register", (req, res) => {
   const password = req.body.password;
   const id = generateRandomString();
 
+  if (!email || !password) {
+    return res.status(400).send("Your email and password cannot be blank.")
+  }
+
+  const user = findUserEmail(email);
+  if (user) {
+    return res.status(400).send("A user with that email already exists.")
+  }
+
   users[id] = {
     id: id,
     email: email,
     password: password
   }
 
-  console.log('users', users[id]);
+  // console.log('users', users[id]);
+
+  res.cookie("user_id", id);
 
 
 
-  res.redirect("urls/");
+  res.redirect("/urls");
 });
 
 app.post("/logout", (req, res) => {
-  req.session = null;
+  res.clearCookie("user_id");
   res.redirect("/urls")
 })
 
