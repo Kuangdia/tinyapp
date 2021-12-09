@@ -40,6 +40,15 @@ const findUserEmail = (email) => {
   return null;
 };
 
+const findUserId = (user_id) => {
+  for (let user in users) {
+    if (user_id === user) {
+      return users[user];
+    }
+  }
+  return null;
+};
+
 function generateRandomString() {
   let randomStr = "";
   let stringLength = 6;
@@ -71,9 +80,7 @@ app.get("/register", (req, res) => {
 
 // loops through urlDatabase to output key + values on page
 app.get("/urls", (req, res) => {
-  console.log(req.cookies);
   const userId = req.cookies["user_id"];
-  // "aBcDeF"
 
   const templateVars = { 
     urls: urlDatabase,
@@ -85,10 +92,17 @@ app.get("/urls", (req, res) => {
 // populates new shortURL link page
 app.get("/urls/new", (req, res) => {
   const userId = req.cookies["user_id"];
-  const templateVars = { 
-    urls: urlDatabase,
-    user: users[userId] };
-  res.render("urls_new", templateVars);
+
+  const user = findUserId(userId);
+  if (!userId) {
+    res.redirect("/login");
+  } else {
+    const templateVars = { 
+      urls: urlDatabase,
+      user: users[userId] 
+    };
+    res.render("urls_new", templateVars);
+  }
 });
 
 // takes in a parameter (:shortURL)
