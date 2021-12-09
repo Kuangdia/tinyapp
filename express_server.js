@@ -5,10 +5,18 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { restart } = require("nodemon");
 const bcrypt = require('bcryptjs');
+const cookieSession = require('cookie-session')
 
 // makes data readable when we POST
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser())
+app.use(cookieSession({
+  name: 'session',
+  keys: ['S3cR3t'],
+
+  // Cookie Options
+  maxAge: 24 * 60 * 60 * 1000 // 24 hours
+}))
 
 // sets express to automatically search views folder for ejs files (we omit views/)
 app.set("view engine", "ejs");
