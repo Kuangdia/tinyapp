@@ -40,14 +40,14 @@ const findUserEmail = (email) => {
   return null;
 };
 
-const findUserId = (user_id) => {
-  for (let user in users) {
-    if (user_id === user) {
-      return users[user];
-    }
-  }
-  return null;
-};
+// const findUserId = (user_id) => {
+//   for (let user in users) {
+//     if (user_id === user) {
+//       return users[user];
+//     }
+//   }
+//   return null;
+// };
 
 function generateRandomString() {
   let randomStr = "";
