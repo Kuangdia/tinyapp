@@ -7,11 +7,14 @@
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav" style="margin-right: auto;">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>  
+        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+          
       </div>
       <% if(user) { %>
         <form class="form-inline" action="/logout" method="POST">
             <label for="name"><b>Logged in as: <%= user.email %></b></label>
+            &nbsp;
+            &nbsp;
             <button type="submit" class="btn btn-outline-dark">Logout</button>
         </form>
       <% } else {%>
