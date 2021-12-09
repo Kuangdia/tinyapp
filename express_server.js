@@ -21,7 +21,7 @@ const users = {
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    password: "123"
   },
  "user2RandomID": {
     id: "user2RandomID", 
@@ -39,15 +39,6 @@ const findUserEmail = (email) => {
   }
   return null;
 };
-
-// const findUserId = (user_id) => {
-//   for (let userId in users) {
-//     if (user_id === userId) {
-//       return users[userId];
-//     }
-//   }
-//   return null;
-// }
 
 function generateRandomString() {
   let randomStr = "";
@@ -166,15 +157,24 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const username = req.body.username
+  const email = req.body.email;
+  const password = req.body.password;
   
-  res.cookie("user_id", username);
+  const user = findUserEmail(email);
+  if (!user) {
+    return res.status(403).send("Your username does not exist")
+  }
+
+  if (user.password !== password) {
+    return res.status(403).send("Your password is incorrect")
+  }
+
+  res.cookie("user_id", user.id);
 
   res.redirect("/urls");
 });
 
 app.post("/register", (req, res) => {
-  // console.log(req.body); // { email: 'slorrrr@gmail.com', password: '123' }
   const email = req.body.email;
   const password = req.body.password;
   const id = generateRandomString();
@@ -194,11 +194,9 @@ app.post("/register", (req, res) => {
     password: password
   }
 
-  // console.log('users', users[id]);
+  // console.log(users);
 
   res.cookie("user_id", id);
-
-
 
   res.redirect("/urls");
 });
