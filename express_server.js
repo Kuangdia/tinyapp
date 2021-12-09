@@ -4,6 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const { restart } = require("nodemon");
+const bcrypt = require('bcryptjs');
 
 // makes data readable when we POST
 app.use(bodyParser.urlencoded({extended: true}));
@@ -32,12 +33,12 @@ const users = {
   "aJ48lW": {
     id: "aJ48lW", 
     email: "user@example.com", 
-    password: "123"
+    password: bcrypt.hashSync('123', 10)
   },
  "user2RandomID": {
     id: "user2RandomID", 
     email: "user2@example.com", 
-    password: "123"
+    password: bcrypt.hashSync('123', 10)
   }
 };
 
@@ -99,13 +100,18 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars)
 });
 
+
+
 // loops through urlDatabase to output key + values on page
 app.get("/urls", (req, res) => {
   const userId = req.cookies["user_id"];
 
   if (!users[userId]) {
-    return res.send("<a href='/login'>Please login to use TinyAPP</a>")
+    return res.send("Please login to use TinyAPP<br></br><a href='/login'>Login</a>")
   }
+
+  console.log(urlDatabase);
+  console.log('urlsForUser(userId), :', urlsForUser(userId));
 
   const templateVars = { 
     urls: urlsForUser(userId),
@@ -113,6 +119,8 @@ app.get("/urls", (req, res) => {
   };
   res.render("urls_index", templateVars);
 });
+
+
 
 // populates new shortURL link page
 app.get("/urls/new", (req, res) => {
@@ -174,22 +182,30 @@ app.get("/urls/edit/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+
+
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
-  const userId = req.cookies["user_id"]
+  const userID = req.cookies["user_id"];
 
-  if (!users[userId]) {
+  // console.log("short", shortURL)
+  // console.log("long", longURL)
+  // console.log("user", userId)
+
+  if (!users[userID]) {
     res.status(400).send("You are not logged in.")
   }
 
-  urlDatabase[shortURL] = { longURL, userId };
+  urlDatabase[shortURL] = { longURL, userID };
+  // console.log('urlDatabase :', urlDatabase);
 
   res.redirect("/urls");
 })
 
-app.post("/urls/edit/:shortURL", (req, res) => {
 
+
+app.post("/urls/edit/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`)
 });
@@ -209,18 +225,19 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  // const hashedPassword = bcrypt.hashSync(password, 10);
 
   if (!email || !password) {
-    return res.status(400).send("<a href='/login'>Your email and password cannot be blank. Click to login.</a>")
+    return res.status(400).send("Your email and password cannot be blank.<br></br><a href='/login'>Click to login.</a>")
   }
   
   const user = findUserEmail(email);
   if (!user) {
-    return res.status(403).send("<a href='/login'>Your username does not exist. Click to login.</a>")
+    return res.status(403).send("Your username does not exist.<br></br><a href='/login'>Click to login.</a>")
   }
 
-  if (user.password !== password) {
-    return res.status(403).send("<a href='/login'>Your password is incorrect. Click to login.</a>")
+  if (!bcrypt.compareSync(password, user.password)) {
+    return res.status(403).send("Your password is incorrect.<br></br><a href='/login'>Click to login.</a>")
   }
 
   res.cookie("user_id", user.id);
@@ -231,24 +248,23 @@ app.post("/login", (req, res) => {
 app.post("/register", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   const id = generateRandomString();
 
   if (!email || !password) {
-    return res.status(400).send("Your email and password cannot be blank.")
+    return res.status(400).send("Your email and password cannot be blank.<br></br><a href='/register'>Back to registration.<a/>")
   }
 
   const user = findUserEmail(email);
   if (user) {
-    return res.status(400).send("A user with that email already exists.")
+    return res.status(400).send("A user with that email already exists.<br></br><a href='/register'>Back to registration.<a/>")
   }
 
   users[id] = {
     id: id,
     email: email,
-    password: password
+    password: hashedPassword
   }
-
-  // console.log(users);
 
   res.cookie("user_id", id);
 
