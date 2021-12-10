@@ -14,6 +14,18 @@ function generateRandomString() {
   return randomStr;
 }
 
+
+// returns a user object from the users object database
+const getUserByEmail = (users, email) => {
+  for (const userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
+    }
+  }
+
+};
+
 module.exports = {
-  generateRandomString
+  generateRandomString,
+  getUserByEmail
 }
