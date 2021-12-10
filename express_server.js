@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const { restart } = require("nodemon");
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
-const { generateRandomString } = require("./helpers");
+const { generateRandomString, getUserByEmail } = require("./helpers");
 
 
 //-------------MiddleWare-------------//
@@ -53,16 +53,6 @@ function urlsForUser(userID) {
   }
   return urls;
 }
-
-const getUserByEmail = (email) => {
-  for (const userId in users) {
-    const user = users[userId];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-};
 
 
 app.get("/", (req, res) => {
@@ -222,7 +212,7 @@ app.post("/login", (req, res) => {
     return res.status(400).send("Your email and password cannot be blank.<br></br><a href='/login'>Click to login.</a>")
   }
   
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(users, email);
   if (!user) {
     return res.status(403).send("Your username does not exist.<br></br><a href='/login'>Click to login.</a>")
   }
@@ -246,7 +236,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send("Your email and password cannot be blank.<br></br><a href='/register'>Back to registration.<a/>")
   }
 
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(users, email);
   if (user) {
     return res.status(400).send("A user with that email already exists.<br></br><a href='/register'>Back to registration.<a/>")
   }
