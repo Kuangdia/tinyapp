@@ -15,17 +15,20 @@
         <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
-
+  </div>
     <div class="card-footer text-muted w-100">
       <h3>Edit</h3>  
       <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
         <div class="form-group m-auto">
           <label for="longURL">New URL:</label>
-          <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em" required>
+          <button type="submit" class="btn btn-primary">Update</button>
         </div>
       </form> 
     </div> 
+  <div>
+    <p><a href="/urls">Back to my URLs</a></p>
+  </div>
 
 
   <!-- Bootstrap JS -->

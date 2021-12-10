@@ -55,6 +55,12 @@ const users = {
 };
 
 
+//-------------Listening for Connections-------------//
+app.listen(PORT, () => {
+  console.log(`Listening on port ${PORT}!`);
+});
+
+
 
 //-------------URLs Homepage-------------//
 app.get("/", (req, res) => {
@@ -62,6 +68,7 @@ app.get("/", (req, res) => {
 });
 
 
+// shows your current short and long URLs along with edit and delete functions for them
 app.get("/urls", (req, res) => {
   const userId = req.session["user_id"];
   const templateVars = {
@@ -168,8 +175,9 @@ app.post("/register", (req, res) => {
 
 
 
-//-------------Create and Edit New URLs-------------//
+//-------------Creates, Edit, and Delete URLs-------------//
 // page to create new URLs
+// users who are not logged in cannot will be prompt to login
 app.get("/urls/new", (req, res) => {
   const userId = req.session["user_id"];
 
@@ -186,6 +194,7 @@ app.get("/urls/new", (req, res) => {
 
 
 // page to get short URLs and edit long URLs
+// users who did not create the shortURL cannot access it
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = req.session["user_id"];
@@ -208,6 +217,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 
 // generates new short and long URL on urls homepage
+// users must be logged in to access this page
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
@@ -222,28 +232,14 @@ app.post("/urls/:shortURL", (req, res) => {
 });
 
 
-// redirects to long URL
-app.get("/u/:shortURL", (req, res) => {
-  const shortURL = req.params.shortURL;
-
-  if (!urlDatabase[shortURL]) {
-    res.status(404).send("This URL does not exist.");
-  } else {
-    const longURL = urlDatabase[shortURL].longURL;
-    res.status(302).redirect(longURL);
-  }
-  
-});
-
-
-
-
+// edits your existing long URL
 app.post("/urls/edit/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   res.redirect(`/urls/${shortURL}`);
 });
 
 
+// deletes your existing URL
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userId = req.session["user_id"];
   const shortURL = req.params.shortURL;
@@ -258,11 +254,24 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 
 
+//-------------Redirects shortURL to LongURL-------------//
+// can only redirect existing short URLs
+app.get("/u/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+
+  if (!urlDatabase[shortURL]) {
+    res.status(404).send("This URL does not exist.");
+  } else {
+    const longURL = urlDatabase[shortURL].longURL;
+    res.status(302).redirect(longURL);
+  }
+  
+});
+
+
+
+//-------------Logout-------------//
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
-});
-
-app.listen(PORT, () => {
-  console.log(`Listening on port ${PORT}!`);
 });

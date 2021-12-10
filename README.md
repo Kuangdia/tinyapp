@@ -2,6 +2,7 @@
 
 TinyApp is a full stack web application built with Node.js and Express that allows users to managed shortened long URLs like tinyurls.com. Users can create and log into their accounts to create, edit, save and delete long URLs.
 
+
 ## Final Product
 
 !["Login Page"](https://github.com/Kuangdia/tinyapp/blob/main/docs/login.png?raw=true)
@@ -9,6 +10,7 @@ TinyApp is a full stack web application built with Node.js and Express that allo
 !["My URLs Page"](https://github.com/Kuangdia/tinyapp/blob/main/docs/My-urls.png)
 
 !["Edit Page"](https://github.com/Kuangdia/tinyapp/blob/main/docs/Edit-urls.png)
+
 
 ## Getting Started
 
@@ -21,11 +23,17 @@ TinyApp is a full stack web application built with Node.js and Express that allo
 `git clone` 
 `cd tinyapp`
 
+
 ## How to Use
 
 - Run `npm start` in your terminal to start your local server.
 - Visit localhost:8080/ in your browser to access TinyApp
 - Create your own account and login to TinyAPP!
+- Or use the following default users:
+
+  1. Username: user@example.com   Password: 123
+  2. Username: user2@example.com   Password: 123
+
 
 ## Dependencies
 

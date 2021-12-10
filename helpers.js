@@ -1,9 +1,5 @@
-//-------------Constants-------------//
-const bcrypt = require('bcryptjs');
-
-
 // generates a random user_id for new users
-function generateRandomString() {
+const generateRandomString = () => {
   let randomStr = "";
   let stringLength = 6;
   let possibleChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -25,7 +21,22 @@ const getUserByEmail = (users, email) => {
 
 };
 
+
+// creates new urls object for current user
+const urlsForUser = (userID, urlDatabase) => {
+  const urls = {};
+
+  for (let key in urlDatabase) {
+    if (urlDatabase[key].userID === userID) {
+      urls[key] = urlDatabase[key];
+    }
+  }
+  return urls;
+};
+
+
 module.exports = {
   generateRandomString,
-  getUserByEmail
-}
+  getUserByEmail,
+  urlsForUser
+};
