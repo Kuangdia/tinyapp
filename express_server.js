@@ -1,9 +1,9 @@
 //-------------Constants-------------//
-const express = require("express");
+const express = require('express');
 const app = express();
 const PORT = 8080;
-const bodyParser = require("body-parser");
-const { restart } = require("nodemon");
+const bodyParser = require('body-parser');
+const { restart } = require('nodemon');
 const bcrypt = require('bcryptjs');
 const cookieSession = require('cookie-session');
 
@@ -14,13 +14,13 @@ const {
   generateRandomString,
   getUserByEmail,
   urlsForUser
-} = require("./helpers");
+} = require('./helpers');
 
 
 
 //-------------MiddleWare Functions-------------//
 app.use(bodyParser.urlencoded({extended: true}));
-app.set("view engine", "ejs");
+app.set('view engine', 'ejs');
 app.use(cookieSession({
   name: 'session',
   keys: ['S3cR3t'],
@@ -64,7 +64,7 @@ app.listen(PORT, () => {
 
 //-------------URLs Homepage-------------//
 app.get("/", (req, res) => {
-  res.redirect("/urls");
+  res.redirect("/login")
 });
 
 
@@ -177,12 +177,12 @@ app.post("/register", (req, res) => {
 
 //-------------Creates, Edit, and Delete URLs-------------//
 // page to create new URLs
-// users who are not logged in cannot will be prompt to login
+// users who are not logged in will be prompt to login
 app.get("/urls/new", (req, res) => {
   const userId = req.session["user_id"];
 
   if (!users[userId]) {
-    res.status(403).send("You are not logged in.<br></br><a href='/login'>Click to login.</a>");
+    res.redirect("/login");
   } else {
     const templateVars = {
       urls: urlsForUser(userId, urlDatabase),
@@ -198,9 +198,14 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const userId = req.session["user_id"];
+
+  if (!urlDatabase[shortURL]) {
+    res.status(404).send("This URL does not exist.");
+  }
+
   const templateVars = {
     shortURL: shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
+    longURL: urlDatabase[shortURL].longURL,
     user: users[userId]
   };
 
